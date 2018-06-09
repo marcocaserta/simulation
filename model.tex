@@ -1,0 +1,223 @@
+\documentclass{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{longtable}
+\usepackage{amssymb,amsmath}
+\usepackage{bbm}
+\usepackage{algorithm,algorithmic}
+
+\usepackage{rotating}
+\usepackage{tikz}
+
+\title{Model Description}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\paragraph{Exogenous Parameters.}
+
+We model two types of players, the \textit{experienced} (E) and the
+\textit{inexperienced} (I). The population of players evolves over time, from
+period $t=0$ to period $T$. In the sequel, we refer to each player category
+using the superscript symbol $\bullet$, with $\bullet \in \left\{ E, I \right\}$.
+
+At period $t=0$, we assume the size of the experienced population to be fixed
+and equal to $n^E_{0} = 1000$. On the other hand, the population size for group I,
+i.e., $n^I_0$, is defined as a proportion of $n^E_{0}$, such that the ratio between
+the two population sizes changes in a prespecified set. More precisely, we run
+simulations with varying initial conditions, such that:
+\begin{equation}
+\frac{n^E_0}{n^I_0} \in \left\{ 0.5, 0.6, \cdots, 1.4, 1.5 \right\}
+\label{eq:ratioE_I}
+\end{equation}
+
+
+We assume the existence of an exogenous survival probability $p$, which is kept
+constant over time. During the study, we modeled the game assuming different
+values of $p$, produced using the following function:
+\begin{equation}
+p = \sqrt{x}, \quad x \in \left\{ 0.025, 0.05, \cdots, 0.25 \right\}
+\label{eq:p-objective}
+\end{equation}
+
+
+To model the phenomenon of over-and-underestimation of survival probabilities
+for different types of players, we assume the following:
+\begin{itemize}
+\item When the exogenous survival probability $p$ is low (e.g., $p \leq
+0.2$), then players of type I tend to overestimate their individual chance of
+surviving, while players of type E tend to underestimated the probability of
+success;
+\item When the exogenous survival probability $p$ is high (e.g., $p >
+0.2$), then players of type I tend to undererestimate their individual chance of
+surviving, while players of type E tend to overestimated the probability of
+success;
+\end{itemize}
+This type of behaviour is modeled using a correcting factor $\delta^\bullet$ as
+follows:
+\begin{eqnarray}
+\delta^E &=
+\begin{cases}
+0.8, & \text{if}~p \leq 0.2\\
+1.2, & \text{if}~p > 0.2
+\end{cases}
+\label{eq:over-underestimation_E} \\
+\delta^I &=
+\begin{cases}
+1.2, & \text{if}~p \leq 0.2\\
+0.8, & \text{if}~p > 0.2
+\end{cases}
+\label{eq:over-underestimation_I}
+\end{eqnarray}
+
+We also assume the existence of an exogenous expected return, i.e., the average
+return a generic player is expected to achieve. Such return is modeles as a
+percentage value and, therefore, can be seen as proportional to the objective
+return of the investment, defined as follows:
+\begin{equation}
+s = \min\left\{ \delta^E, \delta^I \right\}\times p
+\label{eq:expected-return-s}
+\end{equation}
+
+
+\paragraph{Characteristics of each player.} Each player is defined by a set of
+subjective estimates, used to face the following decisions:
+\begin{itemize}
+\item At period $t=0$, a player decides whether to enter the market
+(\textit{entering} or \textit{forfeiting} decision);
+\item In periods $t=1,\cdots,T$, a player decides whether to remain in the
+market (\textit{remaining} or \textit{quitting} decision.)
+\end{itemize}
+Each player is modeled via a subjective set of estimates for the following parameters:
+\begin{itemize}
+\item Individual survival probability. This probability is proportional
+to the exogenous survival probability $p$, and adjusted to embed subjective
+mechanisms of over-and-underestimation of the likelihood of survival via the
+correction factor $\delta^\bullet$, defined via
+Equations~(\ref{eq:over-underestimation_E})
+and~(\ref{eq:over-underestimation_I}). More precisely, at period $t=0$, each
+player's individual survival probability is defined as follows:
+\begin{equation}
+p_{i0}= \delta^\bullet \times p + r_i^\bullet
+\label{eq:pi}
+\end{equation}
+where $r_i^\bullet \sim N(0,\sigma^\bullet)$ is a random number generated under a
+normal distribution with mean $\mu=0$ and standard deviation
+$\sigma^\bullet=0.05$ when $\bullet = E$, and $\sigma^\bullet=0.10$ when
+$\bullet = I$. Note that we are assigning a higher variability in the
+estimation of individual survival probabilities to the inexperienced group.
+\item Individual threshold value. This value is an estimate of the expected
+return, and is proportional to the exogenous expected return $s$ defined via
+Equation~(\ref{eq:expected-return-s}). Each player estimates an expected
+threshold value $s_i$ as follows:
+\begin{equation}
+s_i= s + r_i^\bullet
+\label{eq:si}
+\end{equation}
+where $r_i^\bullet \sim N(0, \sigma^\bullet)$ is a random number generated under
+a normal distribution, as described above. Note that $s_i$ does not depend on
+the time period $t$ and remains unchanged during the entire time horizon.
+\item Individual experience update. At each period $t \geq 1$, we account for
+the gained experience of players of type I, by bringing their subjective
+probabilities closer to the values of the subjective
+probabilities of players of type E. Therefore, each player of type I revises
+its individual probability using the following correction:
+\begin{equation}
+p_{it}=\begin{cases}
+\left( 1+\gamma \right)p_{it}, & \text{if}~p > 0.2\\
+\displaystyle \frac{1}{1+\gamma}p_{it}, & \text{if}~p \leq 0.2
+\end{cases}
+\label{eq:correction}
+\end{equation}
+where $\gamma$ indicates the correction factor and is defined as follows:
+\begin{equation}
+\gamma = \frac{|\delta^E-\delta^N|}{T}
+\label{eq:gamma}
+\end{equation}
+\item Bayesian learning process. At the end of each period $t \geq 1$, each player
+updates its beliefs with respect to the probability of survival of its specific
+class. Let us indicate with $n^\bullet_t$ the number of players of class
+$\bullet$ still remaining in the game at the end of period $t$. An objective
+probability of survival, for each of the two classes, is thus computed as
+follows:
+\begin{equation}
+p_{B}^\bullet = \frac{n^\bullet_t}{n^\bullet_{t-1}}
+\label{eq:bayes}
+\end{equation}
+Thus, each player updates its individual beliefs applying the following
+smoothed learning approach:
+\begin{equation}
+p_{it} = \alpha p_{it-1} + (1-\alpha)p_{B}^\bullet
+\label{eq:smoothed-bayes}
+\end{equation}
+\end{itemize}
+
+\paragraph{New Entrants.} At the end of each period $t \geq 1$, we model the
+existence of potential new entrants. They observe the situation of the game
+and estimate their individual $p_{it}$ and $s_i$. More precisely, $s_i$ is
+estimated using Equation~(\ref{eq:si}) while $p_{it}$ is set as the average
+$p_{it}$ computed over all the players of its class. The number of potential
+entrants at the end of period $t$ is fixed at $0.2\times n^\bullet_t$.
+
+\paragraph{Player's Decision Rule.} 
+Each player's decision is made based on the following rule:
+\begin{equation}
+d_{it}= \mathbbm{1}_{p_{it}\geq s_i}
+\label{eq:decision-i}
+\end{equation}
+where $\mathbbm{1}_{A}$ is the indicator function, which takes
+value $1$ if $A$ is true, and $0$ otherwise. Finally, in each period
+$t=0,1,\cdots,T$, a player $i$ selects decision
+\textit{entering} or \textit{remaining} if $d_{it}= 1$ and
+\textit{forfeiting} or \textit{quitting} if $d_{it}= 0$.
+
+
+\paragraph{The Algorithm.} Let us now sketch the overall algorithm. Assume a set of parameters
+$n^\bullet_0, p, T$ has been given. A high level description of the algorithm
+is provided below.
+
+
+
+\floatname{algorithm}{Algorithm}
+\begin{algorithm}
+  \caption{: \texttt{Simulation} } \label{algo:simulation1}
+  \begin{algorithmic}[1]
+    \REQUIRE $n^\bullet_0, p, T$
+    % \ENSURE
+    \STATE Set $t=0$ and compute $\delta^\bullet$, $s$ \hfill
+    \COMMENT{\texttt{initialization}}
+    \STATE Generate $n^\bullet_0$ players: Define $s_i$ and $p_{it}$\hfill
+    \COMMENT{\texttt{Eqs.(\ref{eq:pi})-(\ref{eq:si})}}
+    \STATE Make decision $d_{it}$ for $i=1,\dots,n^\bullet_0$ \hfill
+    \COMMENT{\texttt{entering or forfeiting}}
+    \FORALL{$t=1,\dots,T$}
+    \STATE Select pool of surviving players \hfill \COMMENT{\texttt{survival
+    probability $p$}}
+    \STATE Apply individual experience update \hfill
+    \COMMENT{\texttt{Eq.(\ref{eq:correction})}}
+    \STATE Apply Bayesian learning process and update $p_{it}$ \hfill
+    \COMMENT{\texttt{Eqs.(\ref{eq:bayes})-(\ref{eq:smoothed-bayes})}}
+    \STATE Make decision $d_{it}$ for $i=1,\dots,n^\bullet_t$ \hfill
+    \COMMENT{\texttt{Eq.(\ref{eq:decision-i})}}
+    \STATE Generate potential new entrants and select the entering ones \hfill
+    \COMMENT{\texttt{get $s_i, p_{it}$, and 
+    $d_{it}$}}
+    \ENDFOR
+  \end{algorithmic}
+\end{algorithm}
+
+
+\begin{sidewaysfigure}
+  \begin{center}
+    \includegraphics[scale=0.42]{linePlot_3.png}
+    % \caption{aa}
+    \label{fig:simulation}
+  \end{center}
+\end{sidewaysfigure}
+
+
+
+
+\end{document}
