@@ -40,6 +40,7 @@
 import random
 import sys
 import numpy as np
+import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 import csv
@@ -214,6 +215,9 @@ def main(argv):
 
     allRows = []  #  this is used to write the csv file
     allRows.append(frow)
+    dfEl = []
+    dfTime = []
+    #  df = pd.DataFrame(columns=["nrE", "nrI", "nE", "nI"])
 
 
     for nE in nESet:
@@ -387,6 +391,24 @@ def main(argv):
                 frow.append(getTotal(popT[nPeriods], 0))
                 allRows.append(frow)
 
+                dfEl.append({"nrE":frow[0], "nrI":frow[1], "p0":p0, "nE":frow[-2],
+                "nI":frow[-1]})
+
+                pos = 4
+                stepsize = 10
+                for tt in range(nPeriods+1):
+                    print("pos = ", pos)
+
+                    print("tt = ", tt )
+                    dfTime.append({"p0": p0, "nrE": frow[0], "nrI": frow[1],
+                    "t": tt, "nE": frow[pos], "nI": frow[pos+1]})
+                    pos += stepsize
+
+
+                print(frow)
+                print(dfTime)
+                input("aka")
+
 
 
             # create a plot with all the values of p0
@@ -439,6 +461,10 @@ def main(argv):
         output = open(csvfile, "w")
         writer = csv.writer(output, lineterminator='\n')
         writer.writerows(allRows)
+
+        df = pd.DataFrame(dfEl)
+        print(df)
+
 
 if __name__ == '__main__':
     main(sys.argv[1:])
