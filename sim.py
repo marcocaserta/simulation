@@ -311,7 +311,7 @@ pThreshold, pNewE, pNewI):
                     if t < nPeriods-1:
                         newE = int(pNewE*getTotal(pop,1))
                         avgP_E = getAvgP(popAux,1)
-                        print("NEW ENTRANTS E :", newE)
+                        #  print("NEW ENTRANTS E :", newE)
                         #  print("  Parameters :  p0 = {0:5.2f}, s0 = {1:5.2f}".format(avgP_E, s0))
                         for i in range(newE):
                             entr = Entrepreneur(1, 1.0, varE, varSE, avgP_E, s0)
@@ -321,7 +321,7 @@ pThreshold, pNewE, pNewI):
 
                         newN = int(pNewI*getTotal(pop,0))
                         avgP_N = getAvgP(popAux,0)
-                        print("NEW ENTRANTS N :", newN)
+                        #  print("NEW ENTRANTS N :", newN)
                         #  print("  Parameters :  p0 = {0:5.2f}, s0 = {1:5.2f}".format(avgP_N, s0))
                         if t > 0:
                             for i in range(newN):
