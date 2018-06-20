@@ -158,7 +158,8 @@ def printStats(pop, t, nE, nN):
     print("Avg pi N     = {0:5.2f}".format(getAvgP(pop,0)))
 
 
-def runSim(nESet, nNSet, alpha, nPeriods, deltaE_base, deltaN_base,ff, pThreshold):
+def runSim(nESet, nNSet, alpha, nPeriods, deltaE_base, deltaN_base,ff,
+pThreshold, pNewE, pNewI):
 
     #  nESet = [1000]
     #  ratioEvsN = [0.5, 0.8, 0.9, 1.0, 1.1, 1.2, 1.5]
@@ -308,9 +309,9 @@ def runSim(nESet, nNSet, alpha, nPeriods, deltaE_base, deltaN_base,ff, pThreshol
 
 
                     if t < nPeriods-1:
-                        newE = int(0.2*getTotal(pop,1))
+                        newE = int(pNewE*getTotal(pop,1))
                         avgP_E = getAvgP(popAux,1)
-                        #  print("NEW ENTRANTS E :", newE)
+                        print("NEW ENTRANTS E :", newE)
                         #  print("  Parameters :  p0 = {0:5.2f}, s0 = {1:5.2f}".format(avgP_E, s0))
                         for i in range(newE):
                             entr = Entrepreneur(1, 1.0, varE, varSE, avgP_E, s0)
@@ -318,9 +319,9 @@ def runSim(nESet, nNSet, alpha, nPeriods, deltaE_base, deltaN_base,ff, pThreshol
                             if entr.decision == 1:
                                 popAux.append(entr)
 
-                        newN = int(0.2*getTotal(pop,0))
+                        newN = int(pNewI*getTotal(pop,0))
                         avgP_N = getAvgP(popAux,0)
-                        #  print("NEW ENTRANTS N :", newN)
+                        print("NEW ENTRANTS N :", newN)
                         #  print("  Parameters :  p0 = {0:5.2f}, s0 = {1:5.2f}".format(avgP_N, s0))
                         if t > 0:
                             for i in range(newN):
@@ -369,7 +370,8 @@ def runSim(nESet, nNSet, alpha, nPeriods, deltaE_base, deltaN_base,ff, pThreshol
 
         return df
 
-def runSimTime(nESet, nNSet, alpha, nPeriods, deltaE_base, deltaN_base,ff, p0L, p0H, pThreshold):
+def runSimTime(nESet, nNSet, alpha, nPeriods, deltaE_base, deltaN_base,ff, p0L,
+p0H, pThreshold, pNewE, pNewI):
 
     # write the headers of the csv file
     frow= []
@@ -511,7 +513,7 @@ def runSimTime(nESet, nNSet, alpha, nPeriods, deltaE_base, deltaN_base,ff, p0L, 
 
 
                     if t < nPeriods-1:
-                        newE = int(0.2*getTotal(pop,1))
+                        newE = int(pNewE*getTotal(pop,1))
                         avgP_E = getAvgP(popAux,1)
                         #  print("NEW ENTRANTS E :", newE)
                         #  print("  Parameters :  p0 = {0:5.2f}, s0 = {1:5.2f}".format(avgP_E, s0))
@@ -521,7 +523,7 @@ def runSimTime(nESet, nNSet, alpha, nPeriods, deltaE_base, deltaN_base,ff, p0L, 
                             if entr.decision == 1:
                                 popAux.append(entr)
 
-                        newN = int(0.2*getTotal(pop,0))
+                        newN = int(pNewI*getTotal(pop,0))
                         avgP_N = getAvgP(popAux,0)
                         #  print("NEW ENTRANTS N :", newN)
                         #  print("  Parameters :  p0 = {0:5.2f}, s0 = {1:5.2f}".format(avgP_N, s0))
